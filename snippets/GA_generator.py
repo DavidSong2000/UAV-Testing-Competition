@@ -27,11 +27,11 @@ class GAGenerator(object):
         self.all_test_dist = [] # Storing all test_cases's min_dist
         self.all_test_score = [] # Storing all test_cases's fitness score
         self.old_pop = [] # Temporary storage for old population(parents) ([chromosome])
-        self.new_pop = [None] * len(self.pop_size) # Temporary storage for new population(childs) ([chromosome])
+        self.new_pop = [None] * self.pop_size # Temporary storage for new population(childs) ([chromosome])
         self.old_test = [] # Temporary storage for old population(parents) ([TestCase])
-        self.new_test = [None] * len(self.pop_size) # Temporary storage for new population(parents) ([TestCase])
+        self.new_test = [None] * self.pop_size # Temporary storage for new population(parents) ([TestCase])
         self.old_fitness = [] # Temporary storage for old fitness score(parents')
-        self.new_fitness = [None] * len(self.pop_size) # Temporary storage for new fitness score(childs')
+        self.new_fitness = [None] * self.pop_size # Temporary storage for new fitness score(childs')
 
 
     def generate(self, gen_budget: int) -> List[TestCase]:
