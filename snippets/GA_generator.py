@@ -21,6 +21,7 @@ class GAGenerator(object):
         self.crossover_rate = 0.5 # [0,1], Used to control the probability of crossover
         self.mutate_rate = 0.1 # [0,1], Used to control the probability of mutate
         self.gamma = 0.8 # Used to tune how diversity is important
+        self.theta = 2 # Used to tune how less obstacle is important
         self.output_num = 20 # Used to control how many test cases are final output
         # Storage
         self.all_test_cases = [] # Storing all test cases generated in GA procedure
@@ -46,10 +47,10 @@ class GAGenerator(object):
             # Store info
             self.all_test_cases.append(indiv_test)
             self.all_test_dist.append(indiv_min_dist)
-            self.all_test_score.append(self.fitness_function(diversity=False))          
+            self.all_test_score.append(self.fitness_function(obs_num_now=indiv[0],diversity=False, less_obs=True))          
             
             # Initial old_fitness
-            indiv_fitness = self.fitness_function(indiv_test, None, indiv_min_dist, diversity=False)
+            indiv_fitness = self.fitness_function(indiv_test, None, indiv_min_dist, indiv[0], diversity=False, less_obs=True)
             self.old_fitness.append(indiv_fitness)
         
         # Main GA Itertation
@@ -72,9 +73,9 @@ class GAGenerator(object):
                 # Store info
                 self.all_test_cases.append(indiv_test)
                 self.all_test_dist.append(indiv_min_dist)
-                self.all_test_score.append(self.fitness_function(indiv_test, self.old_test[i], indiv_min_dist, diversity=True))          
+                self.all_test_score.append(self.fitness_function(indiv_test, self.old_test[i], indiv_min_dist, indiv[0], diversity=True, less_obs=True))          
                 # Evaluate new individuals
-                self.new_fitness[i] = self.fitness_function(indiv_test, self.old_test[i], indiv_min_dist, diversity=True)
+                self.new_fitness[i] = self.fitness_function(indiv_test, self.old_test[i], indiv_min_dist, , indiv[0], diversity=True, less_obs=True)
             
             # Roulette wheel selection and put them as old_pop(next iteration's parents population)
             self.old_pop, self.old_fitness, self,old_test = self.roulette_wheel_selection(self.new_pop, self.new_fitness, self.new_test)
@@ -156,7 +157,7 @@ class GAGenerator(object):
             print(e)
         return test, min_dist
     
-    def fitness_function(self, test_now=None, test_past=None, min_dist=1000, diversity=False):
+    def fitness_function(self, test_now=None, test_past=None, min_dist=1000, obs_num_now=0, diversity=False, less_obs=False):
         # Calculate fitness value
         # calculate point(sim) first
         # Hard Fail
@@ -173,6 +174,7 @@ class GAGenerator(object):
         else:
             point_sim = 0.00001
         print(f"point(sim):{point_sim}")
+        test_fitness = point_sim
         # calculate fitness score with point and diversity
         if diversity:
             # calculate diversity_score
@@ -182,12 +184,16 @@ class GAGenerator(object):
                 div_score = test_now.trajectory.dtw_distance(test_past.trajectory) # Use Build-in DTW Distance Measurement
             print(f"div_score:{div_score}")
             # calculate final test fiteness score
-            test_fitness = point + self.gamma * div_score
-            print(f"fitness:{test_fitness}")
-            return test_fitness
-        # only calculate point
-        else:
-            return point_sim
+            test_fitness += self.gamma * div_score
+        if less_obs:
+            # calculate less obstacle score
+            less_obs_score = 1 / (obs_num_now + 1)
+            print(f"less_obs_score:{less_obs_score}")
+            # calculate final test fiteness score
+            test_fitness += self.theta * less_obs_score
+        
+        print(f"fitness:{test_fitness}")
+        return test_fitness
 
     def crossover(self, parent_list):
         # Initialize crossed_child_list
