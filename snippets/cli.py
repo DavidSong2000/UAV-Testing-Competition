@@ -7,6 +7,7 @@ import shutil
 import sys
 from decouple import config
 from random_generator import RandomGenerator
+from GA_generator import GAGenerator
 
 TESTS_FOLDER = config("TESTS_FOLDER", default="./generated_tests/")
 logger = logging.getLogger(__name__)
@@ -18,15 +19,38 @@ def arg_parse():
     )
     subparsers = main_parser.add_subparsers()
     parser = subparsers.add_parser(name="generate", description="generate tests")
-    parser.add_argument("test", help="initial test description file address")
+    parser.add_argument(
+        "test",
+        help="initial test description file address",
+        )
 
     parser.add_argument(
         "budget",
         type=int,
         help="test generation budget (total number of simulations allowed)",
-    )
+        )
+
+    # Add argument to control generator type
+    parser.add_argument(
+        "generatorType", 
+        type=str,
+        choices = ["Random", "GA"],
+        help="String to control which type of generator is used(including:Random, GA)",
+        )
+    
+    # Optional argument for population size
+    parser.add_argument(
+        "--population_size",
+        type=int,
+        help="Population size for GA (required if generatorType is GA)",
+        )
 
     args = main_parser.parse_args()
+
+    # Check if population_size is provided when generatorType is GA
+    if args.generatorType == "GA" and args.population_size is None:
+        main_parser.error("population_size is required when generatorType is GA")
+
     return args
 
 
@@ -58,8 +82,12 @@ if __name__ == "__main__":
     config_loggers()
     try:
         args = arg_parse()
-        generator = RandomGenerator(case_study_file=args.test)
-        test_cases = generator.generate(args.budget)
+        if args.generatorType == 'Random':
+            generator = RandomGenerator(case_study_file=args.test)
+            test_cases = generator.generate(budget=args.budget)
+        elif args.generatorType == 'GA':
+            generator = GAGenerator(case_study_file=args.test, population_size=args.population_size)
+            test_cases = generator.generate(gen_budget=args.budget)
 
         ### copying the test cases to the output folder
         tests_fld = f'{TESTS_FOLDER}{datetime.now().strftime("%d-%m-%H-%M-%S")}/'
