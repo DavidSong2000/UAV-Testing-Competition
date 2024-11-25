@@ -20,7 +20,7 @@ class GAGenerator(object):
         self.pop_size = population_size # each generation's population size, should be EVEN because of crossover
         self.crossover_rate = 0.5 # [0,1], Used to control the probability of crossover
         self.mutate_rate = 0.1 # [0,1], Used to control the probability of mutate
-        self.gamma = 1 # Used to tune how diversity is important
+        self.gamma = 0.8 # Used to tune how diversity is important
         self.output_num = 20 # Used to control how many test cases are final output
         # Storage
         self.all_test_cases = [] # Storing all test cases generated in GA procedure
@@ -179,7 +179,7 @@ class GAGenerator(object):
             if test_past == None or test_now == None: # Used when the first generation and error test
                 div_score = 0
             else:
-                div_score = np.linalg.norm(test_now.trajectory - test_past.trajectory)
+                div_score = test_now.trajectory.dtw_distance(test_past.trajectory) # Use Build-in DTW Distance Measurement
             print(f"div_score:{div_score}")
             # calculate final test fiteness score
             test_fitness = point + self.gamma * div_score
