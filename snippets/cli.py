@@ -83,9 +83,11 @@ if __name__ == "__main__":
     try:
         args = arg_parse()
         if args.generatorType == 'Random':
+            print(f'Using {args.generatorType} Generator!')
             generator = RandomGenerator(case_study_file=args.test)
             test_cases = generator.generate(budget=args.budget)
         elif args.generatorType == 'GA':
+            print(f'Using {args.generatorType} Generator!')
             generator = GAGenerator(case_study_file=args.test, population_size=args.population_size)
             test_cases = generator.generate(gen_budget=args.budget)
 

@@ -4,7 +4,8 @@ import random
 class GAGenerator:
     min_obs = 1
     max_obs = 3
-    mutate_rate = 1
+    indiv_mutate_rate = 1
+    gene_mutate_rate = 0.5
 
     class Obstacle:
         class Size:
@@ -30,8 +31,7 @@ class GAGenerator:
         for crossed_child in crossed_child_list:
             # random pointer to decide whether this time mutate this individual
             mutate_pointer = random.random()
-            print(mutate_pointer)
-            if mutate_pointer > self.mutate_rate:
+            if mutate_pointer > self.indiv_mutate_rate:
                 # no mutation
                 final_child = crossed_child
                 final_child_list.append(final_child)
@@ -46,6 +46,11 @@ class GAGenerator:
                 if new_num_obs > len(old_obs_param_list):
                     new_obs_param_list = old_obs_param_list
                     for _ in range(new_num_obs - len(old_obs_param_list)):
+                        '''
+                        Here we regenerate all 7 parameters, 
+                        but we can also only regenerate several of them
+                        by moving mutate_pointer inside here
+                        '''
                         l=random.uniform(self.min_size.l, self.max_size.l)
                         w=random.uniform(self.min_size.w, self.max_size.w)
                         h=random.uniform(self.min_size.h, self.max_size.h)
@@ -63,9 +68,40 @@ class GAGenerator:
                 elif new_num_obs < len(old_obs_param_list):
                     new_obs_param_list = random.sample(old_obs_param_list, k=new_num_obs)
 
-                # (Shouldn't happened but in case)If the num_obs remains the same, keep original
+                # If the number of obstacles remains the same, keep original (At the edge and moving outside of range)
                 else:
-                    new_obs_param_list = old_obs_param_list    
+                    # # Here we keep the old obstacles
+                    # new_obs_param_list = old_obs_param_list
+                    # Here we randomize genes in Obstacles
+                    new_obs_param_list = old_obs_param_list
+                    for obs_idx in range(new_num_obs):
+                        # Mutation on l
+                        gene_pointer = random.random()
+                        if gene_pointer < self.gene_mutate_rate:
+                            new_obs_param_list[obs_idx][0] = random.uniform(self.min_size.l, self.max_size.l)
+                        # Mutation on w
+                        gene_pointer = random.random()
+                        if gene_pointer < self.gene_mutate_rate:
+                            new_obs_param_list[obs_idx][1] = random.uniform(self.min_size.w, self.max_size.w)
+                        # Mutation on h
+                        gene_pointer = random.random()
+                        if gene_pointer < self.gene_mutate_rate:
+                            new_obs_param_list[obs_idx][2] = random.uniform(self.min_size.h, self.max_size.h)
+                        
+                        # Mutation on x
+                        gene_pointer = random.random()
+                        if gene_pointer < self.gene_mutate_rate:
+                            new_obs_param_list[obs_idx][3] = random.uniform(self.min_position.x, self.max_position.x)
+                        # Mutation on y
+                        gene_pointer = random.random()
+                        if gene_pointer < self.gene_mutate_rate:
+                            new_obs_param_list[obs_idx][4] = random.uniform(self.min_position.x, self.max_position.y)
+                        # No Mutation on z
+                        new_obs_param_list[obs_idx][4] = 0
+                        # Mutation on r
+                        gene_pointer = random.random()
+                        if gene_pointer < self.gene_mutate_rate:
+                            new_obs_param_list[obs_idx][6] = random.uniform(self.min_position.x, self.max_position.r)    
 
                 final_child = [new_num_obs, new_obs_param_list]
                 final_child_list.append(final_child)
