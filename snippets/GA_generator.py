@@ -210,7 +210,7 @@ class GAGenerator(object):
             test_fitness = 0.0001 # Used when error test
         else: 
             distances = test_now.get_distances()
-            ave_min_dist = sum(distances) / len(test_now.test.simulation.obstacles)
+            ave_min_dist = sum(distances) / len(test_now.test.simulation.obstacles) # Average min distance between trajactory to all obstacles
             point_sim = 1 / (min_dist + ave_min_dist + 0.0001)
             print(f"GENERATOR - Fitness - point(sim):{point_sim}")
             test_fitness = self.rho * point_sim
