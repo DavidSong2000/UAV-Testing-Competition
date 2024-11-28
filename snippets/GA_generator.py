@@ -18,9 +18,9 @@ class GAGenerator(object):
         self.case_study = DroneTest.from_yaml(case_study_file)
         # Hyperparameters
         self.pop_size = population_size # each generation's population size, should be EVEN because of crossover
-        self.crossover_rate = 1 # [0,1], Used to control the probability of crossover
-        self.indiv_mutate_rate = 1 # [0,1], Used to control the probability of mutate happens on Individual
-        self.gene_mutate_rate = 1 # [0,1], Used to control the probability of mutate on obstacle parameter gene
+        self.crossover_rate = 0.5 # [0,1], Used to control the probability of crossover
+        self.indiv_mutate_rate = 0.5 # [0,1], Used to control the probability of mutate happens on Individual
+        self.gene_mutate_rate = 0.3 # [0,1], Used to control the probability of mutate on obstacle parameter gene
         self.rho = 10 # Used to tune how point(sim) is important
         self.gamma = 0.001 # Used to tune how diversity is important
         self.theta = 0.1 # Used to tune how less obstacle is important
@@ -346,29 +346,41 @@ class GAGenerator(object):
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
                                 l_mutated = random.uniform(self.min_size.l, self.max_size.l)
+                            else:
+                                l_mutated = new_obs_param_list[0]
                             # Mutation on w
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
                                 w_mutated = random.uniform(self.min_size.w, self.max_size.w)
+                            else:
+                                w_mutated = new_obs_param_list[1]
                             # Mutation on h
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
                                 h_mutated = random.uniform(self.min_size.h, self.max_size.h)
+                            else:
+                                h_mutated = new_obs_param_list[2]
                             
                             # Mutation on x
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
                                 x_mutated = random.uniform(self.min_position.x, self.max_position.x)
+                            else:
+                                x_mutated = new_obs_param_list[3]
                             # Mutation on y
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
                                 y_mutated = random.uniform(self.min_position.x, self.max_position.y)
+                            else:
+                                y_mutated = new_obs_param_list[4]
                             # No Mutation on z
                             z_mutated = 0
                             # Mutation on r
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
-                                r_mutated = random.uniform(self.min_position.x, self.max_position.r)    
+                                r_mutated = random.uniform(self.min_position.x, self.max_position.r)
+                            else:
+                                r_mutated = new_obs_param_list[6]
 
                             # Create the mutated obstacle
                             mutated_gene = [l_mutated, w_mutated, h_mutated, x_mutated, y_mutated, z_mutated, r_mutated]
