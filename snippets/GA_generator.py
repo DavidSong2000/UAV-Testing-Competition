@@ -347,32 +347,32 @@ class GAGenerator(object):
                             if gene_pointer < self.gene_mutate_rate:
                                 l_mutated = random.uniform(self.min_size.l, self.max_size.l)
                             else:
-                                l_mutated = new_obs_param_list[0]
+                                l_mutated = new_obs_param_list[obs_idx][0]
                             # Mutation on w
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
                                 w_mutated = random.uniform(self.min_size.w, self.max_size.w)
                             else:
-                                w_mutated = new_obs_param_list[1]
+                                w_mutated = new_obs_param_list[obs_idx][1]
                             # Mutation on h
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
                                 h_mutated = random.uniform(self.min_size.h, self.max_size.h)
                             else:
-                                h_mutated = new_obs_param_list[2]
+                                h_mutated = new_obs_param_list[obs_idx][2]
                             
                             # Mutation on x
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
                                 x_mutated = random.uniform(self.min_position.x, self.max_position.x)
                             else:
-                                x_mutated = new_obs_param_list[3]
+                                x_mutated = new_obs_param_list[obs_idx][3]
                             # Mutation on y
                             gene_pointer = random.random()
                             if gene_pointer < self.gene_mutate_rate:
                                 y_mutated = random.uniform(self.min_position.x, self.max_position.y)
                             else:
-                                y_mutated = new_obs_param_list[4]
+                                y_mutated = new_obs_param_list[obs_idx][4]
                             # No Mutation on z
                             z_mutated = 0
                             # Mutation on r
@@ -380,7 +380,7 @@ class GAGenerator(object):
                             if gene_pointer < self.gene_mutate_rate:
                                 r_mutated = random.uniform(self.min_position.x, self.max_position.r)
                             else:
-                                r_mutated = new_obs_param_list[6]
+                                r_mutated = new_obs_param_list[obs_idx][6]
 
                             # Create the mutated obstacle
                             mutated_gene = [l_mutated, w_mutated, h_mutated, x_mutated, y_mutated, z_mutated, r_mutated]
